@@ -1,0 +1,102 @@
+Sub market_analyst()
+
+'Set Dimmensions
+Dim start As Long
+Dim last_row As Long
+Dim ws As Worksheet
+Dim ticker_name As String
+
+'Count to the last row with values
+last_row = Cells(Rows.Count, 1).End(xlUp).Row
+
+'Cycle through Worksheets
+For Each ws In Worksheets
+    ws.Activate
+     
+    ' Set an initial variable for holding the total for each ticker
+    Dim ticker_total As Double
+    ticker_total = 0
+
+    'Insert Header Names
+    Range("I1").Value = "Ticker"
+    Range("J1").Value = "Yearly Change"
+    Range("K1").Value = "Percent Change"
+    Range("L1").Value = "Total Stock Volume"
+    
+    'Keep track of the location for ticker in the summary table
+    Dim summary_table_row As Integer
+    summary_table_row = 2
+
+    ' Loop through all data
+    For i = 2 To last_row
+
+        ' Check if we are still within the same ticker group
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+            
+                     
+                     
+            ' Search For Non Zero Beginning Value
+            start = 2
+            If Cells(start, 3) = 0 Then
+                For find_value = start To i
+                    If Cells(find_value, 3).Value <> 0 Then
+                     
+                        start = find_value
+                        Exit For
+                    End If
+                 Next find_value
+            End If
+
+            ' Calculate Change
+            yearly_change = (Cells(i, 6) - Cells(start, 3))
+            percentChange = (yearly_change / (Cells(start, 3)))
+
+            ' start of the next stock ticker
+            start = i + 1
+            
+            ' Set ticker name
+            ticker_name = Cells(i, 1).Value
+
+            ' Add to the ticker total
+            ticker_total = ticker_total + Cells(i, 3).Value
+
+            ' Print Columns in Summary Table
+            Range("I" & summary_table_row).Value = ticker_name
+            Range("J" & summary_table_row).Value = yearly_change
+            Range("K" & summary_table_row).Value = percentChange
+            Range("K" & summary_table_row).NumberFormat = "0.00%"
+            Range("L" & summary_table_row).Value = ticker_total
+             
+            'Color Cells red/green for positive/negative values
+            
+            
+            ' Add one to the summary table row
+            summary_table_row = summary_table_row + 1
+      
+            ' Reset the ticker total
+            ticker_total = 0
+            
+
+            ' If the cell immediately following a row has the same ticker
+        Else
+
+            ' Add to the ticker total
+             ticker_total = ticker_total + Cells(i, 7).Value
+      
+        End If
+   
+   
+   'Color R/G for Positive/Negative Values
+    If Cells(i, 10) < 0 Then
+        Cells(i, 10).Interior.ColorIndex = 3
+
+    ElseIf Cells(i, 10) >= 0 Then
+        Cells(i, 10).Interior.ColorIndex = 4
+
+    End If
+            
+    Next i
+
+Next ws
+
+End Sub
