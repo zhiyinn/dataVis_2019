@@ -66,8 +66,15 @@ For Each ws In Worksheets
             Range("K" & summary_table_row).Value = percentChange
             Range("K" & summary_table_row).NumberFormat = "0.00%"
             Range("L" & summary_table_row).Value = ticker_total
-             
-            'Color Cells red/green for positive/negative values
+               
+               'Color R/G for Positive/Negative Values
+                If Cells(i, 10) < 0 Then
+                    Cells(i, 10).Interior.ColorIndex = 3
+
+                ElseIf Cells(i, 10) >= 0 Then
+                    Cells(i, 10).Interior.ColorIndex = 4
+
+                End If
             
             
             ' Add one to the summary table row
@@ -86,14 +93,7 @@ For Each ws In Worksheets
         End If
    
    
-   'Color R/G for Positive/Negative Values
-    If Cells(i, 10) < 0 Then
-        Cells(i, 10).Interior.ColorIndex = 3
-
-    ElseIf Cells(i, 10) >= 0 Then
-        Cells(i, 10).Interior.ColorIndex = 4
-
-    End If
+ 
             
     Next i
 
